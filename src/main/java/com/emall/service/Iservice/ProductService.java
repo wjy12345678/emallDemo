@@ -84,6 +84,6 @@ public interface ProductService {
      * @param pathUri
      * @return
      */
-    public ServerResponse<FullUploadVo> fullUploadImage(Integer productId, String[] pathUri);
+    public FullUploadVo fullUploadImage(Integer productId, List<String> pathUri);
 
 }

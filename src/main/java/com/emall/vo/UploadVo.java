@@ -5,30 +5,22 @@ package com.emall.vo;
  */
 public class UploadVo {
 
-    private Integer productId;
+
     private String uri;
     private String url;
 
     public UploadVo() {
     }
 
-    public UploadVo(Integer productId, String uri, String url) {
-        this.productId = productId;
+    public UploadVo(String uri, String url) {
+
         this.uri = uri;
         this.url = url;
     }
-    public UploadVo(Integer productId, String uri) {
-        this.productId = productId;
+    public UploadVo( String uri) {
+
         this.uri = uri;
 
-    }
-
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
     }
 
     public String getUri() {
@@ -50,7 +42,7 @@ public class UploadVo {
     @Override
     public String toString() {
         return "UploadVo{" +
-                "productId=" + productId +
+
                 ", uri='" + uri + '\'' +
                 ", url='" + url + '\'' +
                 '}';

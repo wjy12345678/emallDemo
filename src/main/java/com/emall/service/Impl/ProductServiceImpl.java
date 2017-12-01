@@ -186,7 +186,7 @@ public class ProductServiceImpl implements ProductService{
         try {
             int col= productDao.uploadImage(productId,uri);
             if (col == 1){
-                UploadVo uploadVo = new UploadVo(productId,uri);
+                UploadVo uploadVo = new UploadVo(uri);
                 uploadVo.setUrl("http://img.emall.com/"+uploadVo.getUri());
                 return ServerResponse.getSuccessServerResponse(uploadVo,null);
             }
@@ -196,28 +196,31 @@ public class ProductServiceImpl implements ProductService{
         return ServerResponse.getFailServerResponse(null,"图片上传失败");
     }
 
+    @Transactional
     @Override
-    public ServerResponse<FullUploadVo> fullUploadImage(Integer productId, String[] pathUri) {
+    public FullUploadVo fullUploadImage(Integer productId, List<String> pathUri) {
 
         String uri = "";
         FullUploadVo fullUploadVo = new FullUploadVo();
-        for (int i=0;i<pathUri.length;i++){
-            uri = uri + pathUri[i];
+        for (int i=0;i<pathUri.size();i++){
+            uri = uri + pathUri.get(i);
         }
         try {
             int col =  productDao.fullUploadImage(productId,uri);
             if (col == 1){
                 fullUploadVo.setSuccess("true");
                 fullUploadVo.setFile_path("http://img.emall.com/"+uri);
-                return ServerResponse.getSuccessServerResponse(fullUploadVo,"上传成功");
+                fullUploadVo.setMsg("上传成功");
+                return fullUploadVo;
             }else {
                 fullUploadVo.setFile_path("d:/"+uri);
                 fullUploadVo.setSuccess("false");
+                fullUploadVo.setMsg("error message");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return ServerResponse.getFailServerResponse(fullUploadVo,"error message");
+        return fullUploadVo;
 
     }
 }

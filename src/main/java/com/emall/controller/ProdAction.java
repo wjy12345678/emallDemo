@@ -5,6 +5,8 @@ import com.emall.pojo.Product;
 import com.emall.service.Iservice.ProductService;
 import com.emall.vo.*;
 import com.github.pagehelper.PageInfo;
+
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -92,35 +98,57 @@ public class ProdAction {
     @RequestMapping(value = "list.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<PageInfo<ProductListVo>> findAll(Integer pageNum,Integer pageSize){
+
         return productService.findAll(pageNum,pageSize);
     }
 
     /**
      * 后台----图片上传
-     * @param pathUri
+     * @param sourceFile
      * @param session
      * @return
      */
-    @RequestMapping(value = "upload.do",method = RequestMethod.POST)
-    @ResponseBody
-    public ServerResponse<UploadVo> uploadImage( String pathUri,HttpSession session){
 
+    //实现文件上传功能
+
+    @RequestMapping(value="upload.do",method=RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse<UploadVo> uploadImage(@RequestParam("filePath") MultipartFile sourceFile,HttpSession session) throws Exception{
         Integer productId = (Integer) session.getAttribute("productId");
-        return productService.uploadImage(productId,pathUri);
-    }
+        String pathUri = "";
+        if(!sourceFile.isEmpty()){
+             File targetFile = new File("D:/3_develop/temp", System.currentTimeMillis()+sourceFile.getOriginalFilename());
+             FileUtils.copyInputStreamToFile(sourceFile.getInputStream(),targetFile );
+            pathUri = targetFile.getName();
+         }
+          return productService.uploadImage(productId,pathUri);
+        }
 
     /**
      * 后台-----富文本上传
-     * @param pathUri
+     * @param sourceFile
      * @param session
      * @return
      */
     @RequestMapping(value = "richtext_img_upload.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<FullUploadVo> fullUploadImage(String pathUri[], HttpSession session){
+    public FullUploadVo fullUploadImage(@RequestParam("filePaths") MultipartFile[] sourceFile, HttpSession session){
 
         Integer productId = (Integer) session.getAttribute("productId");
+        List<String> pathUriList = new ArrayList<>();
+        for (int i=0;i<sourceFile.length;i++){
+            MultipartFile file = sourceFile[i];
+            if (!file.isEmpty()){
+                File targetFile = new File("D:/temp",System.currentTimeMillis()+file.getOriginalFilename());
+                try {
+                    FileUtils.copyInputStreamToFile(file.getInputStream(),targetFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                pathUriList.add(targetFile.getName());
+            }
+        }
 
-        return productService.fullUploadImage(productId,pathUri);
+        return productService.fullUploadImage(productId,pathUriList);
     }
 }
