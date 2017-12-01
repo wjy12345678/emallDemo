@@ -50,7 +50,11 @@ public class UserAction {
     @ResponseBody
     public ServerResponse1<String> registry(User user){
         int b;
+
         int c;
+
+        int d;
+
         return null;
     }
 }
