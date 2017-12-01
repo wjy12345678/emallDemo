@@ -49,6 +49,7 @@ public class UserAction {
     @RequestMapping(value = "register.do",method = RequestMethod.GET)
     @ResponseBody
     public ServerResponse1<String> registry(User user){
+        int b;
         return null;
     }
 }
